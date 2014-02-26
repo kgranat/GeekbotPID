@@ -3,6 +3,14 @@
 
 #include <Servo.h> 
 
+ 
+//include the I2C Wire library - needed for communication with the I2C chip attached to the LCD manual 
+#include <Wire.h> 
+// include the RobotGeekLCD library
+#include <RobotGeekLCD.h>
+
+
+
 // Encoder Pin Positions.
 // Right IR Sensor
 #define RightEncoderPin 2
@@ -76,10 +84,15 @@ long previousMillisr = 0;        // will store last time LED was
 long intervalr = 15;           // interval at which to blink (milliseconds)
 
 //left debouncing
-long previousMillisil = 0;        // will store last time LED was 
-long intervalil = 15;           // interval at which to blink (milliseconds)
+long previousMillisl = 0;        // will store last time LED was 
+long intervall = 15;           // interval at which to blink (milliseconds)
+
+//lcd update variables
+long previousMillisLCD = 0;        // will store last time LED was 
+long intervalLCD = 1000;           // interval at which to blink (milliseconds)
 
 
+RobotGeekLCD lcd;
 
 
 void setup()
@@ -131,6 +144,10 @@ void setup()
  L_PID.SetOutputLimits(0,45);
  R_PID.SetOutputLimits(0,45);
  
+   lcd.init();
+
+    lcd.print("");
+
 }
  
 void loop(){
@@ -160,9 +177,24 @@ else{
     R_PID.Compute();
     LmotorForward(L_Output);
     RmotorForward(R_Output);  
-
+  
+  
 }
 
+//LCD Update
+  unsigned long currentMillisLCD = millis();
+  if(currentMillisLCD - previousMillisLCD > intervalLCD) 
+  {
+    // save the last time you blinked the LED 
+    previousMillisLCD = currentMillisLCD;   
+    lcd.setCursor(0, 0);
+    lcd.print("R:");
+    lcd.print(RightEncoderPos);   
+    lcd.setCursor(0, 1);
+    lcd.print("L:");
+    lcd.print(LeftEncoderPos);
+
+  }
 
 
 //  getParam();       
@@ -214,12 +246,12 @@ void GetSpeeds()
 // Encoder event for the interrupt call
 void LeftEncoderEvent()
 {
-   unsigned long currentMillisil = millis();
+   unsigned long currentMillisl = millis();
  
-  if(currentMillisil - previousMillisil > intervalil) 
+  if(currentMillisl - previousMillisl > intervall) 
   {
     // save the last time you blinked the LED 
-    previousMillisil = currentMillisil;   
+    previousMillisl = currentMillisl;   
     LeftEncoderPos++;
 
   }
