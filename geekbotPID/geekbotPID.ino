@@ -63,8 +63,8 @@ long NewRPos;
 unsigned long lastMilli = 0;                    // loop timing
 unsigned long lastMilliPrint = 0;               // loop timing
 
-int rightSpeed = 90;
-int leftSpeed = 90;
+int rightSpeed = 1500;
+int leftSpeed = 1500;
 
 
   Servo servoLeft;
@@ -137,12 +137,12 @@ void setup()
   servoLeft.attach(LEFT_SERVO_PIN); 
   servoRight.attach(RIGHT_SERVO_PIN);
 
-  servoLeft.write(leftSpeed);
-  servoRight.write(rightSpeed);
+  servoLeft.writeMicroseconds(leftSpeed);
+  servoRight.writeMicroseconds(rightSpeed);
   
   
- L_PID.SetOutputLimits(0,45);
- R_PID.SetOutputLimits(0,45);
+ L_PID.SetOutputLimits(0,200);
+ R_PID.SetOutputLimits(0,200);
  
    lcd.init();
 
@@ -278,14 +278,14 @@ void RightEncoderEvent()
 
  void RmotorForward(int PWM_val)  {
  
-  servoRight.write(90 - PWM_val);
+  servoRight.writeMicroseconds(1500 - PWM_val);
   
   
   
   }
   
  void LmotorForward(int PWM_val)  {
-  servoLeft.write(90 + PWM_val); 
+  servoLeft.writeMicroseconds(1500 + PWM_val); 
   }  
   
 // void LmotorOdometry(int spd, int distance)  {
